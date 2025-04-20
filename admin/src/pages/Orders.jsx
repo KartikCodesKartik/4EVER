@@ -50,15 +50,21 @@ const Orders = ({ token }) => {
 
   return (
     <div>
-      <h3>Order Page</h3>
+      <h3 className="text-xl font-semibold mb-4">Order Page</h3>
       <div>
         {orders.map((order, index) => (
           <div
             key={index}
-            className="grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 border-gray-300 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700"
+            className={`grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700 ${
+              order.status === 'Cancelled' ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           >
             <img className="w-12" src={assets.parcel_icon} alt="Parcel Icon" />
+
             <div>
+              {order.status === 'Cancelled' && (
+                <p className="text-red-500 font-semibold mb-2">Order Cancelled</p>
+              )}
               <div>
                 {order.items.map((item, idx) => (
                   <p className="py-0.5" key={idx}>
@@ -82,26 +88,32 @@ const Orders = ({ token }) => {
               </div>
               <p>{order.address.phone}</p>
             </div>
+
             <div>
               <p className="text-sm sm:text-[15px]">Items: {order.items.length}</p>
               <p className="mt-3">Method: {order.paymentMethod}</p>
               <p>Payment: {order.payment}</p>
               <p>Date: {new Date(order.date).toLocaleDateString()}</p>
             </div>
-            <p className="text-sm sm:text-[15px]">
+
+            <p className="text-sm sm:text-[15px] font-semibold">
               {currency}
               {order.amount}
             </p>
+
             <select
               onChange={(event) => statusHandler(event, order._id)}
               value={order.status}
-              className="p-2 font-semibold"
+              className={`p-2 font-semibold ${
+                order.status === 'Cancelled' ? 'bg-red-200 text-red-700' : ''
+              }`}
             >
               <option value="Order Placed">Order Placed</option>
               <option value="Packing">Packing</option>
               <option value="Shipped">Shipped</option>
               <option value="Out for delivery">Out for delivery</option>
               <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option> {/* Admin cancel option */}
             </select>
           </div>
         ))}
